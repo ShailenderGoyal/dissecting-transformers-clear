@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="The first fine-grained empirical analysis of inference energy across core components of transformer architecture using CLEAR methodology.">
+  <meta name="keywords" content="CLEAR, Transformers, Energy Efficiency, Green AI, LLMs, Sustainability">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dissecting Transformers: A 'CLEAR' Perspective towards Green AI</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Dissecting Transformers: A 'CLEAR' Perspective towards Green AI</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Hemang Jain,</span>
+            <span class="author-block">
+              Shailender Goyal,</span>
+            <span class="author-block">
+              Divyansh Pandey,
+            </span>
+            <span class="author-block">
+              Karthik Vaidhyanathan
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">&nbsp;</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="./static/paper.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2510.02810"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://anonymous.4open.science/r/CLEAR-D487"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            The rapid adoption of Large Language Models (LLMs) has raised significant environmental concerns. Unlike the one-time cost of training, LLM inference occurs continuously at a global scale and now dominates the AI energy footprint. Yet, most sustainability studies report only coarse, model-level metrics due to the lack of fine-grained measurement methods, treating energy efficiency more as an afterthought than as a primary objective.
+          </p>
+          <p>
+            We present the first fine-grained empirical analysis of inference energy across core components of transformer architecture. We propose a novel methodology, <strong>Component-Level Energy Assessment via Repeated sampling (CLEAR)</strong>, to overcome temporal mismatch between microsecond(μs) scale component execution and monitoring of millisecond(ms) scale energy sensors.
+          </p>
+          <p>
+            Using CLEAR, we evaluate 15 models spanning four distinct architecture types and consistently keep component-wise energy variance below 9.5% while capturing more than 90% of the model's total energy as individual components. Our empirical analysis reveals that Attention blocks consume significantly more energy per floating-point operation (FLOP), indicating that energy consumption is not proportionally aligned with FLOP counts. This shows that FLOPs alone fail to capture the true energy cost at a component level. Our findings establish detailed component-level energy baselines and provide insight as an initial step to build energy-efficient transformer models through component-level optimizations.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Key Contributions -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Key Contributions</h2>
+        <div class="content has-text-left">
+          <ol>
+            <li><strong>Novel Methodology:</strong> We propose CLEAR (Component-Level Energy Assessment via Repeated sampling), a methodology to overcome temporal mismatch between execution of microsecond (μs) scale components and millisecond (ms) scale energy sensors.</li>
+
+            <li><strong>Comprehensive Empirical Analysis:</strong> Using CLEAR, we measure component-level energy consumption for 15 models across different model architectures with high consistency and completeness, performing empirical analysis across different input token lengths and floating point precisions.</li>
+
+            <li><strong>Energy-FLOP Relationship:</strong> Through our empirical analysis, we observe that energy consumed per FLOP of computation varies significantly across components, with Attention Block exhibiting the highest energy consumed per FLOP. We demonstrate that energy consumption of components can be decomposed into fixed overheads and FLOP-dependent costs.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Methodology Overview -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">CLEAR Methodology</h2>
+        <div class="content has-text-justified">
+          <p>
+            Our methodology targets component-level energy measurement by focusing on key computational primitives common to most transformer-based models: <strong>Attention blocks</strong>, <strong>MLP blocks</strong>, <strong>Normalization blocks</strong>, the <strong>Embedding Layer</strong>, and the final <strong>Language Modeling Head</strong>.
+          </p>
+          <h3 class="title is-4">The Challenge</h3>
+          <p>
+            Accurately measuring the energy consumption of individual components is challenging because their execution time (typically 10-100 μs) is much shorter than the sampling period of GPU power sensors. NVIDIA's NVML has a sensor read rate of about 20-50 ms, leading to two distinct sources of error:
+          </p>
+          <ul>
+            <li>Components completing entirely between sensor samples result in zero reported energy</li>
+            <li>Measurements include significant idle energy, making it hard to separate true component energy</li>
+          </ul>
+
+          <h3 class="title is-4">Our Solution: Amplification Strategy</h3>
+          <p>
+            We adopt an amplification strategy where each component is repeatedly executed back-to-back (N times) on cached activations. This scales the effective runtime so that the total energy outweighs the idle background consumption, making the noise comparatively negligible. The per-execution energy is then obtained by averaging: <strong>Ê<sub>c</sub> = E<sub>total</sub> / N ± ε/N</strong>
+          </p>
+          <p>
+            By increasing N, the noise term ε/N diminishes proportionally, yielding significantly reliable per-component energy estimates. We repeat the amplified measurement for T trials to further smooth out sensor noise.
+          </p>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure1-1.png" alt="CLEAR Methodology Pipeline" style="max-width: 100%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 1:</strong> CLEAR pipeline: (1) Store forward-pass activations in Activation Store, (2) Measure per-component energy consumption by isolating each component (e.g., Attention Block) and replaying stored activations, (3) Validate for consistency and completeness, and (4) perform Empirical energy analysis across models.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Findings -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Key Findings</h2>
+        <div class="content has-text-justified">
+
+          <h3 class="title is-4">1. Consistency and Completeness</h3>
+          <p>
+            Using CLEAR, we achieve component-wise energy variance consistently below <strong>9.5%</strong> of respective mean values for components consuming ≥5mJ. The overall energy capture at both block and model level consistently remains above <strong>90%</strong>, demonstrating that summing measured energies of individual components provides a reliable estimate of total consumption.
+          </p>
+
+          <h3 class="title is-4">2. Attention Blocks are Energy Inefficient</h3>
+          <p>
+            Across all input token lengths, the <strong>Attention mechanism consistently exhibits a higher energy-to-FLOPs ratio</strong> than MLP and LM-head layers. This inefficiency stems from query-key dot products, scaling, softmax operations, and complex memory access patterns that introduce memory traffic and synchronization overheads.
+          </p>
+
+          <h3 class="title is-4">3. FLOPs Don't Tell the Full Story</h3>
+          <p>
+            The energy-to-FLOPs ratio (E/FLOPs) decreases consistently as input sequence length grows, pointing to the presence of a <strong>fixed energy overhead</strong> independent of FLOPs. Energy consumption can be modeled as: <strong>E(L) ≈ E₀ + k · FLOPs(L)</strong>, where E₀ is the fixed overhead and k varies by component.
+          </p>
+          <p>
+            Notably, the marginal coefficient k is component-dependent and significantly higher for Attention than other subsystems. This indicates that distributing total energy proportionally across components based solely on FLOPs is overly simplistic.
+          </p>
+
+          <h3 class="title is-4">4. Floating-Point Precision Effects</h3>
+          <p>
+            Normalization layers consume <strong>more energy in FP16 than FP32</strong> due to type conversions for numerical stability. While upgrading from FP16 to FP32 increases absolute energy consumption, the relative share of energy consumed by Attention, MLP, and LM-Head components remains virtually unchanged.
+          </p>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Visualization -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Results & Visualizations</h2>
+        <div class="content has-text-justified">
+
+          <h3 class="title is-4">Energy Consumption Across Models</h3>
+          <p>
+            Our comprehensive evaluation reveals significant variations in energy consumption patterns across different transformer architectures. The table below shows energy consumption for the GPT-OSS-20B model across different token lengths, demonstrating high consistency (standard deviation &lt;10%) and completeness (&gt;96% capture rate).
+          </p>
+
+          <div class="table-container">
+            <table class="table is-bordered is-striped is-narrow is-hoverable" style="font-size: 0.85em; margin: 0 auto;">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>8 Tokens</th>
+                  <th>32 Tokens</th>
+                  <th>64 Tokens</th>
+                  <th>96 Tokens</th>
+                  <th>128 Tokens</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Attention Block</strong></td>
+                  <td>53.3 mJ</td>
+                  <td>64.1 mJ</td>
+                  <td>75.2 mJ</td>
+                  <td>93.9 mJ</td>
+                  <td>100.7 mJ</td>
+                </tr>
+                <tr>
+                  <td><strong>MLP</strong></td>
+                  <td>685.4 mJ</td>
+                  <td>776.9 mJ</td>
+                  <td>867.7 mJ</td>
+                  <td>958.1 mJ</td>
+                  <td>1046.2 mJ</td>
+                </tr>
+                <tr>
+                  <td><strong>Normalization</strong></td>
+                  <td>9.3 mJ</td>
+                  <td>10.8 mJ</td>
+                  <td>12.7 mJ</td>
+                  <td>13.4 mJ</td>
+                  <td>14.6 mJ</td>
+                </tr>
+                <tr>
+                  <td><strong>% Capture (Model)</strong></td>
+                  <td>97.7%</td>
+                  <td>98.3%</td>
+                  <td>96.6%</td>
+                  <td>97.1%</td>
+                  <td>98.1%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Component Energy Distribution</h3>
+          <p>
+            For decoder-only models like Qwen 2.5-3B and Gemma-3-4B, our analysis shows that:
+          </p>
+          <ul>
+            <li><strong>MLP blocks</strong> account for 55-70% of layer energy in FP16 precision</li>
+            <li><strong>Attention blocks</strong> consume 26-35% despite lower FLOPs</li>
+            <li><strong>Normalization</strong> layers show 3-9% energy overhead</li>
+            <li><strong>Language Model Head</strong> contributes 5-10% of total model energy</li>
+          </ul>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Energy per FLOP Analysis</h3>
+          <p>
+            The most critical finding from our empirical analysis is that <strong>Attention blocks consume 2-3× more energy per FLOP</strong> compared to MLP and LM-Head layers across all tested models. This demonstrates that FLOP counts alone are insufficient proxies for energy consumption.
+          </p>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure3-1.png" alt="E/FLOP ratio for model components" style="max-width: 90%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 3:</strong> E/FLOP ratio for model components in Qwen-2.5-3B (left) and Gemma-3-4B (right). Attention consistently shows highest E/FLOP ratio across all input lengths.</p>
+          </div>
+
+          <p style="margin-top: 2rem;">
+            Furthermore, we observe that the E/FLOP ratio decreases with longer input sequences, while the marginal energy per FLOP (ΔE/ΔFLOP) remains approximately constant. This confirms our energy model: <strong>E(L) = E₀ + k·FLOPs(L)</strong>, where E₀ represents fixed initialization costs.
+          </p>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure4-1.png" alt="E/FLOP and ΔE/ΔFLOP analysis" style="max-width: 100%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 4:</strong> Qwen-2.5-3B and Gemma-3-4B models: E/FLOP and ΔE/ΔFLOP ratios. For both models, the E/FLOP ratio decreases with input length, while marginal energy per FLOP remains nearly constant.</p>
+          </div>
+
+          <h3 class="title is-4" style="margin-top: 2rem;">Component Energy Distribution Across Architectures</h3>
+          <p>
+            Our analysis reveals distinct energy consumption patterns across different model architectures:
+          </p>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure6-1.png" alt="Energy breakdown in large encoder models" style="max-width: 95%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 5:</strong> Energy breakdown in large variants of encoder-only models (ALBERT-Large, BERT-Large, DistilRoBERTa, RoBERTa-Large). The first two charts illustrate block-level distributions, while the latter two present distributions across the entire model. FP-16 and FP-32 precisions for each model are shown.</p>
+          </div>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure7-1.png" alt="Energy breakdown in base encoder models" style="max-width: 95%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 6:</strong> Energy breakdown in encoder-only models (ALBERT-Base, BERT-Base, DistilBERT, RoBERTa-Base). The first two charts illustrate block-level distributions, while the latter two present distributions across the entire model. FP-16 and FP-32 precisions for each model are shown.</p>
+          </div>
+
+          <div class="content has-text-centered" style="margin-top: 2rem;">
+            <img src="./static/images/figures/figure8-1.png" alt="Energy breakdown in decoder-only models" style="max-width: 95%; height: auto;"/>
+            <p class="has-text-centered" style="margin-top: 0.5rem;"><strong>Figure 7:</strong> Energy breakdown in decoder-only models (Qwen-3.5, Llama-3.2, Gemma-3, Phi-3-4B). The first two charts illustrate block-level distributions, while the latter two present distributions across the entire model. FP-16 and FP-32 precisions for each model are shown.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Discussion -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Discussion</h2>
+        <div class="content has-text-justified">
+
+          <h3 class="title is-4">Why FLOPs Fail as Energy Proxies</h3>
+          <p>
+            Most sustainability studies have primarily relied on FLOPs and related metrics as convenient proxies for energy consumption. However, our component-level analysis reveals that <strong>this approach systematically obscures crucial disparities</strong>:
+          </p>
+          <ul>
+            <li><strong>Fixed vs. Variable Costs:</strong> Energy consumption comprises fixed overheads (E₀) independent of FLOPs, plus variable costs proportional to computation. Aggregate measurements cannot distinguish these components.</li>
+            <li><strong>Component Heterogeneity:</strong> The marginal energy coefficient (k) varies significantly across components. Attention mechanisms have k values 2-3× higher than MLP blocks, reflecting their memory-intensive operations.</li>
+            <li><strong>Memory-Bound Operations:</strong> Attention's query-key dot products, softmax, and complex memory access patterns introduce synchronization overheads that don't scale linearly with FLOPs.</li>
+          </ul>
+
+          <h3 class="title is-4">Architectural Insights</h3>
+
+          <p><strong>Encoder-Only Models:</strong></p>
+          <p>
+            For BERT, RoBERTa, and ALBERT variants, we observe that Attention and Feed-Forward blocks consume roughly comparable energy in base models. However, as model size grows, dense FFN layers scale in parameters, causing Attention to account for a smaller share of total energy. This pattern mirrors large decoder-only models (3-4B parameters).
+          </p>
+
+          <p><strong>Decoder-Only Models:</strong></p>
+          <p>
+            Contemporary LLMs (LLaMA, Gemma, Qwen, Phi) show MLP blocks dominating energy consumption (55-70% in FP16), despite Attention having higher per-FLOP costs. This is due to the sheer parameter count and computational intensity of the feed-forward layers. Importantly, the <strong>relative energy distribution remains stable across FP16 and FP32</strong>, though absolute consumption increases.
+          </p>
+
+          <p><strong>Normalization Layers:</strong></p>
+          <p>
+            Counterintuitively, normalization layers consume <strong>more energy in FP16 than FP32</strong>. This stems from the common practice of casting tensors to 32-bit precision for numerical stability during normalization, then converting back. These type conversions introduce measurable overhead.
+          </p>
+
+          <h3 class="title is-4">Validation and Reliability</h3>
+          <p>
+            CLEAR demonstrates statistically reliable and sufficiently complete component-wise energy profiling:
+          </p>
+          <ul>
+            <li><strong>Consistency:</strong> Standard deviation consistently below 9.5% for components consuming ≥5mJ across all models and configurations</li>
+            <li><strong>Completeness:</strong> >90% energy capture rate at both block and model levels, validating that our component measurements account for nearly all consumption</li>
+            <li><strong>Scalability:</strong> Successfully applied across 15 models spanning 4 architecture types, demonstrating generalizability</li>
+          </ul>
+
+          <h3 class="title is-4">Limitations and Future Work</h3>
+          <p>
+            While CLEAR provides the first component-level view of transformer energy consumption, several aspects merit further exploration:
+          </p>
+          <ul>
+            <li><strong>Hardware Variability:</strong> Different GPU families apply distinct low-level optimizations. Extending analysis across GPU generations would sharpen understanding of hardware-specific energy profiles.</li>
+            <li><strong>Dynamic Workloads:</strong> Our analysis focuses on single-token generation. Autoregressive generation with KV-caching presents different energy dynamics worth investigating.</li>
+            <li><strong>Operator-Level Granularity:</strong> Future work could decompose components further into individual operators (matrix multiplications, activations, etc.) for even finer-grained optimization guidance.</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Implications for Green AI</h2>
+        <div class="content has-text-justified">
+          <p>
+            Our findings underscore that <strong>sustainability in AI must be treated as a first-class research objective</strong> rather than an afterthought. By moving beyond aggregate model-level reporting to examine component-level dynamics, we provide:
+          </p>
+          <ul>
+            <li><strong>Detailed Energy Baselines:</strong> First comprehensive component-level energy measurements for transformers across diverse architectures, enabling informed architectural choices</li>
+            <li><strong>Debunking FLOPs Myth:</strong> Empirical evidence that FLOPs-based energy proxies systematically obscure component-level disparities, particularly for memory-bound operations</li>
+            <li><strong>Methodology for Future Research:</strong> CLEAR enables systematic, reliable component-wise energy profiling that can support comparative studies and targeted optimization</li>
+            <li><strong>Predictive Modeling Foundation:</strong> Understanding of fixed vs. variable costs and component-specific coefficients enables accurate energy prediction from architectural design choices</li>
+            <li><strong>Optimization Roadmap:</strong> Identification of energy-intensive components (especially Attention) guides where algorithmic and hardware co-design efforts should focus</li>
+          </ul>
+
+          <p style="margin-top: 1.5rem;">
+            <strong>Practical Applications:</strong>
+          </p>
+          <ul>
+            <li>Model architects can use component-level baselines to estimate energy costs during design phase</li>
+            <li>Researchers can target optimization efforts on high-impact components (e.g., efficient attention mechanisms)</li>
+            <li>Hardware designers can prioritize accelerating memory-bound operations that show high energy-per-FLOP ratios</li>
+            <li>Deployment teams can make informed decisions about precision (FP16 vs FP32) based on component-specific trade-offs</li>
+          </ul>
+
+          <p style="margin-top: 1.5rem;">
+            This work aligns with the growing emphasis on Green AI and sustainable computing, providing the granular insights needed to build AI systems that are both performant and environmentally responsible. As LLM inference now dominates AI's energy footprint, component-level optimization becomes critical for sustainable deployment at scale.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{jain2025dissecting,
+  author    = {Jain, Hemang and Goyal, Shailender and Pandey, Divyansh and Vaidhyanathan, Karthik},
+  title     = {Dissecting Transformers: A 'CLEAR' Perspective towards Green AI},
+  journal   = {arXiv preprint arXiv:2510.02810},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2510.02810}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://arxiv.org/pdf/2510.02810">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://anonymous.4open.science/r/CLEAR-D487" class="external-link">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
